@@ -19,13 +19,13 @@ protocol Flag {
 }
 
 class FeatureBuilder<T: Flag> {
-    var featureType: T
+    private let feature: T
     init(feature: T) {
-        self.featureType = feature
+        self.feature = feature
     }
     
     func isApplicable() -> Bool {
-        return featureType.isOn()
+        return feature.isOn()
     }
 }
 
@@ -60,22 +60,21 @@ class ThirdFeatureModel: Flag {
     func isOn() -> Bool {
         return true
     }
-    
-    func doSomething() {
-        print("I am Third")
-    }
+
 }
 
 
 
 class HeaderModel: FeatureBuilder<FirstFeatureModel> {
+    private let headerFeature: FirstFeatureModel
     
-    init() {
-        super.init(feature: FirstFeatureModel())
+    override init(feature: FirstFeatureModel = FirstFeatureModel()) {
+        self.headerFeature = feature
+        super.init(feature: feature)
     }
     
     func featureAction() {
-        featureType.doSomething()
+        headerFeature.doSomething()
     }
     
 }
@@ -96,12 +95,15 @@ struct HeaderView: View {
 
 
 class BodyViewModel: FeatureBuilder<SecondFeatureModel> {
-    init() {
-        super.init(feature: SecondFeatureModel())
+    private let bodyFeature: SecondFeatureModel
+
+    override init(feature: SecondFeatureModel = SecondFeatureModel()) {
+        self.bodyFeature = feature
+        super.init(feature: feature)
     }
     
     func featureAction() {
-        featureType.doSomething()
+        bodyFeature.doSomething()
     }
 }
 
@@ -122,21 +124,22 @@ struct BodyView: View {
 
 class DevBodyViewModel: FeatureBuilder<FirstFeatureModel> {
     private var isLoggedIn = false
+    private let devBodyFeature: FirstFeatureModel
     
-    init() {
-        let test = FirstFeatureModel()
-        super.init(feature: test)
+    override init(feature: FirstFeatureModel = FirstFeatureModel()) {
+        self.devBodyFeature = feature
+        super.init(feature: feature)
     }
     
     override func isApplicable() -> Bool {
-        if self.featureType.isOn() && isLoggedIn {
+        if devBodyFeature.isOn() && isLoggedIn {
             return true
         }
         return false
     }
     
     func featureAction() {
-        featureType.doSomething()
+        devBodyFeature.doSomething()
     }
 }
 
