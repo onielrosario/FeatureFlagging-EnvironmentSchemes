@@ -14,12 +14,11 @@ struct APIModel {
     }
 }
 
-protocol FeatureFlag {
+protocol Flag {
     func isOn() -> Bool
-    func getAPIData()
 }
 
-class FeatureBuilder<T: FeatureFlag> {
+class FeatureBuilder<T: Flag> {
     var featureType: T
     init(feature: T) {
         self.featureType = feature
@@ -31,38 +30,38 @@ class FeatureBuilder<T: FeatureFlag> {
 }
 
 
-class FirstFeatureModel: FeatureFlag {
+class FirstFeatureModel: Flag {
     private let model = APIModel(isFlagged: true)
     
     func isOn() -> Bool {
         return model.isFlagged
     }
     
-    func getAPIData() {
+    func doSomething() {
         print("Im First")
     }
 }
 
-class SecondFeatureModel: FeatureFlag {
+class SecondFeatureModel: Flag {
     private let model = APIModel(isFlagged: false)
     
     func isOn() -> Bool {
         model.isFlagged
     }
     
-    func getAPIData() {
+    func doSomething() {
         print("Im Second")
     }
 }
 
-class ThirdFeatureModel: FeatureFlag {
+class ThirdFeatureModel: Flag {
     var message = ""
     
     func isOn() -> Bool {
         return true
     }
     
-    func getAPIData() {
+    func doSomething() {
         print("I am Third")
     }
 }
@@ -76,7 +75,7 @@ class HeaderModel: FeatureBuilder<FirstFeatureModel> {
     }
     
     func featureAction() {
-        featureType.getAPIData()
+        featureType.doSomething()
     }
     
 }
@@ -102,7 +101,7 @@ class BodyViewModel: FeatureBuilder<SecondFeatureModel> {
     }
     
     func featureAction() {
-        featureType.getAPIData()
+        featureType.doSomething()
     }
 }
 
@@ -137,7 +136,7 @@ class DevBodyViewModel: FeatureBuilder<FirstFeatureModel> {
     }
     
     func featureAction() {
-        featureType.getAPIData()
+        featureType.doSomething()
     }
 }
 
